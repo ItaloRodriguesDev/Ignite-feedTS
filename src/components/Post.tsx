@@ -1,6 +1,6 @@
 import { format, formatDistanceToNow } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR'
-import { FormEvent, useState, ChangeEvent } from 'react';
+import { FormEvent, useState, ChangeEvent, InvalidEvent } from 'react';
 
 import { Avatar } from './Avatar';
 import { Comment } from './Comment';
@@ -13,10 +13,16 @@ interface Author {
   avatarUrl: string;
 }
 
+interface Content  {
+  type: 'paragraph' | 'link';
+  content: string
+
+}
+
 interface PostProps {
   author: Author;
   publishedAt: Date;
-  content: string;
+  content: Content[]
 }
 
 /* Fizemos uma desestruturação, nas propriedades para não ficar repetitivo o uso do termo "props."*/
@@ -50,12 +56,12 @@ export function Post({ author, publishedAt, content }: PostProps) {
     setNewCommentText(event.target.value)
   }
 
-  function handleNewCommentInvalid() {
+  function handleNewCommentInvalid(event: InvalidEvent <HTMLTextAreaElement>) {
     event.target.setCustomValidity('Esse campo e origatório!')
 
   }
 
-  function deleteComment(commentToDelete) {
+  function deleteComment(commentToDelete: string) {
     const commentWithoutDeletedOne = comments.filter(comment => {
       return comment !== commentToDelete;
     })
